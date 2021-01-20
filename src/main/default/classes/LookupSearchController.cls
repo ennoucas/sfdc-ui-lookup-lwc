@@ -1,4 +1,5 @@
 public with sharing class LookupSearchController {
+    @TestVisible
     private class LookupSearchException extends Exception {
     }
 
