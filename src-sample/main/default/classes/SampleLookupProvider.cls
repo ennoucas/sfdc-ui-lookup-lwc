@@ -1,4 +1,4 @@
-public with sharing class SampleLookupProvider {
+public with sharing class SampleLookupProvider implements LookupSearchProvider {
     public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String searchParams) {
         String key = String.escapeSingleQuotes(searchKey);
         List<Account> accounts = [SELECT ID, Name, BillingCountry FROM Account WHERE Name LIKE :key];
