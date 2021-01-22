@@ -1,8 +1,21 @@
-const { createLookupElement, SAMPLE_SEARCH_ITEMS, flushPromises } = require('./lookupTest.utils');
+const { createLookupElement, SAMPLE_SEARCH_ITEMS, flushPromises, inputSearchTerm } = require('./lookupTest.utils');
 import { registerApexTestWireAdapter } from '@salesforce/sfdx-lwc-jest';
 import getDefaultResults from '@salesforce/apex/LookupSearchController.getDefaultResults';
+import getNewRecordOptions from '@salesforce/apex/LookupSearchController.getNewRecordOptions';
+import search from '@salesforce/apex/LookupSearchController.search';
 
+const getNewRecordOptionsAdapter = registerApexTestWireAdapter(getNewRecordOptions);
 const getDefaultResultsAdapter = registerApexTestWireAdapter(getDefaultResults);
+
+jest.mock(
+    '@salesforce/apex/LookupSearchController.search',
+    () => {
+        return {
+            default: jest.fn()
+        };
+    },
+    { virtual: true }
+);
 
 describe('c-lookup rendering', () => {
     afterEach(() => {
@@ -154,12 +167,41 @@ describe('c-lookup rendering', () => {
         expect(clearSelButton.disabled).toBeTruthy();
     });
 
-    it('renders errors', () => {
+    it('renders errors when getDefaultResults fail', () => {
         const errors = [{ message: 'Sample error 1' }, { message: 'Sample error 2' }];
-        const lookupEl = createLookupElement({
-            disabled: true
-        });
+        const lookupEl = createLookupElement();
         getDefaultResultsAdapter.error(errors);
+
+        return flushPromises().then(() => {
+            // Verify errors
+            const errorEls = lookupEl.shadowRoot.querySelectorAll('label.form-error');
+            expect(errorEls.length).toBe(errors.length);
+            expect(errorEls[0].textContent).toBe(errors[0].message);
+            expect(errorEls[1].textContent).toBe(errors[1].message);
+        });
+    });
+
+    it('renders errors when getNewRecordOptions fail', () => {
+        const errors = [{ message: 'Sample error 1' }, { message: 'Sample error 2' }];
+        const lookupEl = createLookupElement();
+        getNewRecordOptionsAdapter.error(errors);
+
+        return flushPromises().then(() => {
+            // Verify errors
+            const errorEls = lookupEl.shadowRoot.querySelectorAll('label.form-error');
+            expect(errorEls.length).toBe(errors.length);
+            expect(errorEls[0].textContent).toBe(errors[0].message);
+            expect(errorEls[1].textContent).toBe(errors[1].message);
+        });
+    });
+
+    it('renders errors when search fail', () => {
+        jest.useFakeTimers();
+        const errors = [{ message: 'Sample error 1' }, { message: 'Sample error 2' }];
+        const lookupEl = createLookupElement();
+        search.mockRejectedValue(errors);
+
+        inputSearchTerm(lookupEl, 'test');
 
         return flushPromises().then(() => {
             // Verify errors

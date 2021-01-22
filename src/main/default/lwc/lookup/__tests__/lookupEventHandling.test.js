@@ -6,9 +6,7 @@ const {
     SAMPLE_NEW_RECORD_OPTION
 } = require('./lookupTest.utils');
 import { getNavigateCalledWith } from 'lightning/navigation';
-
 import search from '@salesforce/apex/LookupSearchController.search';
-
 import { registerApexTestWireAdapter } from '@salesforce/sfdx-lwc-jest';
 import getNewRecordOptions from '@salesforce/apex/LookupSearchController.getNewRecordOptions';
 
