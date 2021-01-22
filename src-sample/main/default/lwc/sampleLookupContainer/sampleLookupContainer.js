@@ -18,10 +18,6 @@ export default class SampleLookupContainer extends LightningElement {
     ];
     errors = [];
     recentlyViewed = [];
-    newRecordOptions = [
-        { value: 'Account', label: 'New Account' },
-        { value: 'Opportunity', label: 'New Opportunity' }
-    ];
 
     /**
      * Handles the lookup selection change

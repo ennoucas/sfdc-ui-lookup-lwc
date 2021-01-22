@@ -8,23 +8,23 @@ public with sharing class LookupSearchController {
         String providerClass,
         String searchKey,
         List<String> selectedIds,
-        String searchParams
+        String params
     ) {
         checkProviderClass(providerClass);
         return ((ILookupSearchProvider) Type.forName(providerClass).newInstance())
-            .search(searchKey, selectedIds, searchParams);
+            .search(searchKey, selectedIds, params);
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<LookupSearchResult> getDefaultResults(String providerClass, String searchParams) {
+    public static List<LookupSearchResult> getDefaultResults(String providerClass, String params) {
         checkProviderClass(providerClass);
-        return ((ILookupSearchProvider) Type.forName(providerClass).newInstance()).getDefaultResults(searchParams);
+        return ((ILookupSearchProvider) Type.forName(providerClass).newInstance()).getDefaultResults(params);
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<LookupNewRecordOption> getNewRecordOptions(String providerClass) {
+    public static List<LookupNewRecordOption> getNewRecordOptions(String providerClass, String params) {
         checkProviderClass(providerClass);
-        return ((ILookupSearchProvider) Type.forName(providerClass).newInstance()).getNewRecordOptions();
+        return ((ILookupSearchProvider) Type.forName(providerClass).newInstance()).getNewRecordOptions(params);
     }
 
     private static void checkProviderClass(String providerClass) {

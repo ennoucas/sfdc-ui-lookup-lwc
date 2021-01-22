@@ -2,6 +2,7 @@ import { LightningElement, api, wire } from 'lwc';
 import search from '@salesforce/apex/LookupSearchController.search';
 import getDefaultResults from '@salesforce/apex/LookupSearchController.getDefaultResults';
 import { NavigationMixin } from 'lightning/navigation';
+import getNewRecordOptions from '@salesforce/apex/LookupSearchController.getNewRecordOptions';
 
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
 
@@ -25,12 +26,12 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     @api isMultiEntry = false;
     @api providerClass;
     @api scrollAfterNItems = null;
-    @api newRecordOptions = [];
     @api minSearchTermLength = 2;
 
     // Template properties
     searchResultsLocalState = [];
     loading = false;
+    newRecordOptions = [];
 
     // Private properties
     _hasFocus = false;
@@ -44,6 +45,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     _curSelection = [];
     _focusedResultIndex = null;
     _searchParams;
+    _newRecordParams;
     _errors;
 
     // PUBLIC FUNCTIONS AND GETTERS/SETTERS
@@ -73,6 +75,15 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     @api
+    get newRecordParams() {
+        return JSON.stringify(this._newRecordParams || '');
+    }
+
+    set newRecordParams(value) {
+        this._newRecordParams = value;
+    }
+
+    @api
     get errors() {
         return (this._errors || []).map(({ message, id }, index) => ({ message, id: id || index }));
     }
@@ -82,11 +93,24 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     // WIRE
-    @wire(getDefaultResults, { providerClass: '$providerClass', searchParams: '$searchParams' })
+    @wire(getDefaultResults, { providerClass: '$providerClass', params: '$searchParams' })
     getDefaultResults({ data, error }) {
         if (data) {
-            console.log(JSON.stringify(data));
             this.setDefaultResults(data);
+        } else if (error) {
+            this.dispatchEvent(new CustomEvent('error', { detail: error }));
+            // eslint-disable-next-line no-console
+            console.error('Lookup error', JSON.stringify(error));
+            this._errors = [{ message: 'An error happened with the lookup', detail: error }];
+        }
+    }
+
+    // WIRE
+    @wire(getNewRecordOptions, { providerClass: '$providerClass', params: '$newRecordParams' })
+    getNewRecordOptions({ data, error }) {
+        console.log('hello', { data, error });
+        if (data) {
+            this.newRecordOptions = [...data];
         } else if (error) {
             this.dispatchEvent(new CustomEvent('error', { detail: error }));
             // eslint-disable-next-line no-console

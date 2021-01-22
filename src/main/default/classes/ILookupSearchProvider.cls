@@ -1,5 +1,5 @@
 public interface ILookupSearchProvider {
-    List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String filterParams);
-    List<LookupSearchResult> getDefaultResults(String filterParams);
-    List<LookupNewRecordOption> getNewRecordOptions();
+    List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String params);
+    List<LookupSearchResult> getDefaultResults(String params);
+    List<LookupNewRecordOption> getNewRecordOptions(String params);
 }

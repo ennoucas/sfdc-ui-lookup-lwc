@@ -1,6 +1,18 @@
-const { createLookupElement, inputSearchTerm, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+const {
+    createLookupElement,
+    inputSearchTerm,
+    flushPromises,
+    SAMPLE_SEARCH_ITEMS,
+    SAMPLE_NEW_RECORD_OPTION
+} = require('./lookupTest.utils');
 import { getNavigateCalledWith } from 'lightning/navigation';
+
 import search from '@salesforce/apex/LookupSearchController.search';
+
+import { registerApexTestWireAdapter } from '@salesforce/sfdx-lwc-jest';
+import getNewRecordOptions from '@salesforce/apex/LookupSearchController.getNewRecordOptions';
+
+const getNewRecordOptionsAdapter = registerApexTestWireAdapter(getNewRecordOptions);
 
 const SAMPLE_SEARCH = 'sample';
 
@@ -123,23 +135,26 @@ describe('c-lookup event handling', () => {
         search.mockResolvedValue(SAMPLE_SEARCH_ITEMS);
 
         // Create lookup with search handler
-        const newRecordOptions = [{ value: 'Account', label: 'New Account' }];
-        const lookupEl = createLookupElement({ newRecordOptions });
+        const lookupEl = createLookupElement();
 
         // Simulate search term input
         inputSearchTerm(lookupEl, SAMPLE_SEARCH);
+        getNewRecordOptionsAdapter.emit(SAMPLE_NEW_RECORD_OPTION);
 
         return flushPromises().then(() => {
             // Simulate mouse selection
             const newRecordEl = lookupEl.shadowRoot.querySelector('div[data-sobject]');
             expect(newRecordEl).not.toBeNull();
+            const labelEl = newRecordEl.querySelector('.slds-listbox__option-text');
+            expect(labelEl.textContent).toBe(SAMPLE_NEW_RECORD_OPTION[0].label);
             newRecordEl.click();
 
             // Verify that we navigate to the right page
             const { pageReference } = getNavigateCalledWith();
             expect(pageReference.type).toBe('standard__objectPage');
-            expect(pageReference.attributes.objectApiName).toBe(newRecordOptions[0].value);
+            expect(pageReference.attributes.objectApiName).toBe(SAMPLE_NEW_RECORD_OPTION[0].value);
             expect(pageReference.attributes.actionName).toBe('new');
+            expect(pageReference.state.defaultFieldValues).toBe(SAMPLE_NEW_RECORD_OPTION[0].defaults);
         });
     });
 });

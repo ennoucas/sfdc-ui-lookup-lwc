@@ -1,4 +1,4 @@
-const { createLookupElement, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+const { createLookupElement, SAMPLE_SEARCH_ITEMS, flushPromises } = require('./lookupTest.utils');
 import { registerApexTestWireAdapter } from '@salesforce/sfdx-lwc-jest';
 import getDefaultResults from '@salesforce/apex/LookupSearchController.getDefaultResults';
 
@@ -28,7 +28,7 @@ describe('c-lookup rendering', () => {
         getDefaultResultsAdapter.emit(SAMPLE_SEARCH_ITEMS);
 
         // Query for rendered list items
-        return Promise.resolve().then(() => {
+        return flushPromises().then(() => {
             const listItemEls = lookupEl.shadowRoot.querySelectorAll('span[role=option]');
             expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
             expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SEARCH_ITEMS[0].id);

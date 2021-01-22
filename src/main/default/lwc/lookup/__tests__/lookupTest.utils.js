@@ -51,3 +51,11 @@ export const SAMPLE_SEARCH_ITEMS = [
         subtitle: 'sub2'
     }
 ];
+
+export const SAMPLE_NEW_RECORD_OPTION = [
+    {
+        value: 'Account',
+        label: 'New Account',
+        defaults: 'NumberOfEmployees=35000'
+    }
+];
