@@ -106,7 +106,6 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     // WIRE
     @wire(getNewRecordOptions, { providerClass: '$providerClass', params: '$newRecordParams' })
     getNewRecordOptions({ data, error }) {
-        console.log('hello', { data, error });
         if (data) {
             this.newRecordOptions = [...data];
         } else if (error) {
