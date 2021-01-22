@@ -155,19 +155,18 @@ describe('c-lookup rendering', () => {
     });
 
     it('renders errors', () => {
-        const errors = [
-            { id: 'e1', message: 'Sample error 1' },
-            { id: 'e2', message: 'Sample error 2' }
-        ];
+        const errors = [{ message: 'Sample error 1' }, { message: 'Sample error 2' }];
         const lookupEl = createLookupElement({
-            disabled: true,
-            errors
+            disabled: true
         });
+        getDefaultResultsAdapter.error(errors);
 
-        // Verify errors
-        const errorEls = lookupEl.shadowRoot.querySelectorAll('label.form-error');
-        expect(errorEls.length).toBe(errors.length);
-        expect(errorEls[0].textContent).toBe(errors[0].message);
-        expect(errorEls[1].textContent).toBe(errors[1].message);
+        return flushPromises().then(() => {
+            // Verify errors
+            const errorEls = lookupEl.shadowRoot.querySelectorAll('label.form-error');
+            expect(errorEls.length).toBe(errors.length);
+            expect(errorEls[0].textContent).toBe(errors[0].message);
+            expect(errorEls[1].textContent).toBe(errors[1].message);
+        });
     });
 });
