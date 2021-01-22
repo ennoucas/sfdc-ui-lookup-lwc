@@ -36,7 +36,7 @@ private class LookupSearchControllerTest {
         Test.stopTest();
 
         System.assertEquals(1, results.size());
-        System.assertEquals('User Test 1', results[0].getTitle());
+        System.assertEquals('Company 1', results[0].getTitle());
     }
 
     @IsTest
@@ -49,46 +49,46 @@ private class LookupSearchControllerTest {
         Test.stopTest();
 
         System.assertEquals(1, results.size());
-        System.assertEquals('User Test 2', results[0].getTitle());
+        System.assertEquals('Company 2', results[0].getTitle());
+    }
+
+    @IsTest
+    static void testGetNewRecordOptions() {
+        Test.startTest();
+        List<LookupNewRecordOption> results = LookupSearchController.getNewRecordOptions(
+            'LookupSearchControllerTest.ProviderExample',
+            null
+        );
+        Test.stopTest();
+
+        System.assertEquals(1, results.size());
+        System.assertEquals('Account', results[0].getValue());
     }
 
     private class BadProviderExample {
     }
 
-    public class ProviderExample implements LookupSearchProvider {
-        private Integer fakeIdCount = 0;
-        private final String ID_PATTERN = '000000000000';
-
-        public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String searchParams) {
+    public class ProviderExample implements ILookupSearchProvider {
+        public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult(
-                    generateId(Account.SObjectType),
-                    'User',
-                    'standard:user',
-                    'User Test 1',
-                    'System Administrator'
+                    '0010R00000yvEyRQAU',
+                    'Account',
+                    'standard:account',
+                    'Company 1',
+                    'San Francisco'
                 )
             };
         }
-        public List<LookupSearchResult> getDefaultResults(String searchParams) {
+        public List<LookupSearchResult> getDefaultResults(String params) {
             return new List<LookupSearchResult>{
-                new LookupSearchResult(
-                    generateId(Account.SObjectType),
-                    'User',
-                    'standard:user',
-                    'User Test 2',
-                    'System Administrator'
-                )
+                new LookupSearchResult('0010R00000yvEyRQAV', 'Account', 'standard:account', 'Company 2', 'Texas')
             };
         }
-
-        private Id generateId(Schema.SObjectType sobjectType) {
-            String keyPrefix = sobjectType.getDescribe().getKeyPrefix();
-            fakeIdCount++;
-
-            String fakeIdPrefix = ID_PATTERN.substring(0, 12 - fakeIdCount.format().length());
-
-            return Id.valueOf(keyPrefix + fakeIdPrefix + fakeIdCount);
+        public List<LookupNewRecordOption> getNewRecordOptions(String params) {
+            return new List<LookupNewRecordOption>{
+                new LookupNewRecordOption('Account', 'New Account', 'name=My Account Test,NumberOfEmployees=35000')
+            };
         }
     }
 }
