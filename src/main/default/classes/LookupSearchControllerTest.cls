@@ -13,18 +13,6 @@ private class LookupSearchControllerTest {
     }
 
     @IsTest
-    static void testSearchWithBadProvider() {
-        Test.startTest();
-        try {
-            LookupSearchController.search('LookupSearchControllerTest.BadProviderExample', 'test');
-            System.assert(false);
-        } catch (LookupSearchController.LookupSearchException e) {
-            System.assert(true, 'A LookupSearchController.LookupSearchException should have been raised');
-        }
-        Test.stopTest();
-    }
-
-    @IsTest
     static void testSearch() {
         Test.startTest();
         List<LookupSearchResult> results = LookupSearchController.search(
@@ -51,7 +39,7 @@ private class LookupSearchControllerTest {
     }
 
     @IsTest
-    static void testGetNewRecordOptions() {
+    static void testDefaultGetNewRecordOptions() {
         Test.startTest();
         List<LookupNewRecordOption> results = LookupSearchController.getNewRecordOptions(
             'LookupSearchControllerTest.ProviderExample',
@@ -59,11 +47,7 @@ private class LookupSearchControllerTest {
         );
         Test.stopTest();
 
-        System.assertEquals(1, results.size());
-        System.assertEquals('Account', results[0].getValue());
-    }
-
-    private class BadProviderExample {
+        System.assertEquals(0, results.size());
     }
 
     public class ProviderExample extends LookupSearchProvider {
@@ -81,11 +65,6 @@ private class LookupSearchControllerTest {
         override public List<LookupSearchResult> getDefaultResults(String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult('0010R00000yvEyRQAV', 'Account', 'standard:account', 'Company 2', 'Texas')
-            };
-        }
-        override public List<LookupNewRecordOption> getNewRecordOptions(String params) {
-            return new List<LookupNewRecordOption>{
-                new LookupNewRecordOption('Account', 'New Account', 'name=My Account Test,NumberOfEmployees=35000')
             };
         }
     }
