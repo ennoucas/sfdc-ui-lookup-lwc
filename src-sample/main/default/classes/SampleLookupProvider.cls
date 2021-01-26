@@ -1,5 +1,5 @@
-public with sharing class SampleLookupProvider implements ILookupSearchProvider {
-    public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String searchFilters) {
+public with sharing class SampleLookupProvider extends LookupSearchProvider {
+    override public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String searchFilters) {
         String key = String.escapeSingleQuotes(searchKey);
         List<Account> accounts = [SELECT ID, Name, BillingCountry FROM Account WHERE Name LIKE :key];
         List<LookupSearchResult> results = new List<LookupSearchResult>();
@@ -9,7 +9,7 @@ public with sharing class SampleLookupProvider implements ILookupSearchProvider 
         return results;
     }
 
-    public List<LookupSearchResult> getDefaultResults(String params) {
+    override public List<LookupSearchResult> getDefaultResults(String params) {
         List<Account> accounts = [SELECT ID, Name, BillingCountry FROM Account ORDER BY LastViewedDate LIMIT 1];
         List<LookupSearchResult> results = new List<LookupSearchResult>();
         for (Account acc : accounts) {
@@ -18,7 +18,7 @@ public with sharing class SampleLookupProvider implements ILookupSearchProvider 
         return results;
     }
 
-    public List<LookupNewRecordOption> getNewRecordOptions(String params) {
+    override public List<LookupNewRecordOption> getNewRecordOptions(String params) {
         return new List<LookupNewRecordOption>{ new LookupNewRecordOption('Account', 'New Account', '') };
     }
 }

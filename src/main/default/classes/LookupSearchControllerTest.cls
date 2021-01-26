@@ -68,8 +68,8 @@ private class LookupSearchControllerTest {
     private class BadProviderExample {
     }
 
-    public class ProviderExample implements ILookupSearchProvider {
-        public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String params) {
+    public class ProviderExample extends LookupSearchProvider {
+        override public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult(
                     '0010R00000yvEyRQAU',
@@ -80,12 +80,12 @@ private class LookupSearchControllerTest {
                 )
             };
         }
-        public List<LookupSearchResult> getDefaultResults(String params) {
+        override public List<LookupSearchResult> getDefaultResults(String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult('0010R00000yvEyRQAV', 'Account', 'standard:account', 'Company 2', 'Texas')
             };
         }
-        public List<LookupNewRecordOption> getNewRecordOptions(String params) {
+        override public List<LookupNewRecordOption> getNewRecordOptions(String params) {
             return new List<LookupNewRecordOption>{
                 new LookupNewRecordOption('Account', 'New Account', 'name=My Account Test,NumberOfEmployees=35000')
             };
