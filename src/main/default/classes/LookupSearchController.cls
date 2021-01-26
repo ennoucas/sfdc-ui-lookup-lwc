@@ -4,15 +4,9 @@ public with sharing class LookupSearchController {
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<LookupSearchResult> search(
-        String providerClass,
-        String searchKey,
-        List<String> selectedIds,
-        String params
-    ) {
+    public static List<LookupSearchResult> search(String providerClass, String params) {
         checkProviderClass(providerClass);
-        return ((ILookupSearchProvider) Type.forName(providerClass).newInstance())
-            .search(searchKey, selectedIds, params);
+        return ((ILookupSearchProvider) Type.forName(providerClass).newInstance()).search(params);
     }
 
     @AuraEnabled(cacheable=true)

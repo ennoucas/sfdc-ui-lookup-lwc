@@ -4,19 +4,7 @@ private class LookupSearchControllerTest {
     static void testSearchWithNoProvider() {
         Test.startTest();
         try {
-            LookupSearchController.search('', 'test', null, null);
-            System.assert(false);
-        } catch (LookupSearchController.LookupSearchException e) {
-            System.assert(true, 'A LookupSearchController.LookupSearchException should have been raised');
-        }
-        Test.stopTest();
-    }
-
-    @IsTest
-    static void testSearchWithBadProvider() {
-        Test.startTest();
-        try {
-            LookupSearchController.search('LookupSearchControllerTest.BadProviderExample', 'test', null, null);
+            LookupSearchController.search(null, 'test');
             System.assert(false);
         } catch (LookupSearchController.LookupSearchException e) {
             System.assert(true, 'A LookupSearchController.LookupSearchException should have been raised');
@@ -29,9 +17,7 @@ private class LookupSearchControllerTest {
         Test.startTest();
         List<LookupSearchResult> results = LookupSearchController.search(
             'LookupSearchControllerTest.ProviderExample',
-            'test',
-            null,
-            null
+            'test'
         );
         Test.stopTest();
 
@@ -53,7 +39,7 @@ private class LookupSearchControllerTest {
     }
 
     @IsTest
-    static void testGetNewRecordOptions() {
+    static void testDefaultGetNewRecordOptions() {
         Test.startTest();
         List<LookupNewRecordOption> results = LookupSearchController.getNewRecordOptions(
             'LookupSearchControllerTest.ProviderExample',
@@ -61,15 +47,11 @@ private class LookupSearchControllerTest {
         );
         Test.stopTest();
 
-        System.assertEquals(1, results.size());
-        System.assertEquals('Account', results[0].getValue());
+        System.assertEquals(0, results.size());
     }
 
-    private class BadProviderExample {
-    }
-
-    public class ProviderExample implements ILookupSearchProvider {
-        public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String params) {
+    public class ProviderExample extends LookupSearchProvider {
+        override public List<LookupSearchResult> search(String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult(
                     '0010R00000yvEyRQAU',
@@ -80,14 +62,9 @@ private class LookupSearchControllerTest {
                 )
             };
         }
-        public List<LookupSearchResult> getDefaultResults(String params) {
+        override public List<LookupSearchResult> getDefaultResults(String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult('0010R00000yvEyRQAV', 'Account', 'standard:account', 'Company 2', 'Texas')
-            };
-        }
-        public List<LookupNewRecordOption> getNewRecordOptions(String params) {
-            return new List<LookupNewRecordOption>{
-                new LookupNewRecordOption('Account', 'New Account', 'name=My Account Test,NumberOfEmployees=35000')
             };
         }
     }
