@@ -1,7 +1,11 @@
 public with sharing class SampleLookupProvider extends LookupSearchProvider {
-    override public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String searchFilters) {
-        String key = String.escapeSingleQuotes(searchKey);
-        List<Account> accounts = [SELECT ID, Name, BillingCountry FROM Account WHERE Name LIKE :key];
+    class SearchParams {
+        String searchKey;
+    }
+
+    override public List<LookupSearchResult> search(String params) {
+        SearchParams searchParam = (SearchParams) JSON.deserialize(params, SearchParams.class);
+        List<Account> accounts = [SELECT ID, Name, BillingCountry FROM Account WHERE Name LIKE :searchParam.searchKey];
         List<LookupSearchResult> results = new List<LookupSearchResult>();
         for (Account acc : accounts) {
             results.add(new LookupSearchResult(acc.Id, 'Account', 'standard:account', acc.Name, acc.BillingCountry));
