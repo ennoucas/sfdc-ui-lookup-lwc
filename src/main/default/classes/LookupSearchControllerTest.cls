@@ -4,7 +4,7 @@ private class LookupSearchControllerTest {
     static void testSearchWithNoProvider() {
         Test.startTest();
         try {
-            LookupSearchController.search(null, 'test');
+            LookupSearchController.search(null, 'test', null, null);
             System.assert(false);
         } catch (LookupSearchController.LookupSearchException e) {
             System.assert(true, 'A LookupSearchController.LookupSearchException should have been raised');
@@ -17,7 +17,9 @@ private class LookupSearchControllerTest {
         Test.startTest();
         List<LookupSearchResult> results = LookupSearchController.search(
             'LookupSearchControllerTest.ProviderExample',
-            'test'
+            'test',
+            null,
+            null
         );
         Test.stopTest();
 
@@ -51,7 +53,7 @@ private class LookupSearchControllerTest {
     }
 
     public class ProviderExample extends LookupSearchProvider {
-        override public List<LookupSearchResult> search(String params) {
+        override public List<LookupSearchResult> search(String searchKey, List<String> selectedIds, String params) {
             return new List<LookupSearchResult>{
                 new LookupSearchResult(
                     '0010R00000yvEyRQAU',
