@@ -68,20 +68,22 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     @api
     get searchParams() {
-        return JSON.stringify(this._searchParams || '');
+        return typeof this._searchParams === 'object' ? JSON.stringify(this._searchParams) : this._searchParams;
     }
 
     set searchParams(value) {
-        this._searchParams = value;
+        this._searchParams = value || '';
     }
 
     @api
     get newRecordParams() {
-        return JSON.stringify(this._newRecordParams || '');
+        return typeof this._newRecordParams === 'object'
+            ? JSON.stringify(this._newRecordParams)
+            : this._newRecordParams;
     }
 
     set newRecordParams(value) {
-        this._newRecordParams = value;
+        this._newRecordParams = value || '';
     }
 
     @api
@@ -200,7 +202,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                     providerClass: this.providerClass,
                     searchKey: this._cleanSearchTerm,
                     selectedIds: this._curSelection.map((element) => element.id),
-                    searchParams: this.searchParams
+                    params: this.searchParams
                 })
                     .then((results) => {
                         this.setSearchResults(results);
